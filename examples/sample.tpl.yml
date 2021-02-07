@@ -1,0 +1,39 @@
+type: template
+
+terraform_conf:
+  remote_state:
+    backend: "s3"
+    config:
+      bucket: "my-terraform-state"
+      key: "terraform.tfstate"
+      region: "us-east-1"
+      encrypt: true
+      dynamodb_table: "my-lock-table"
+  terraform_ver: "1.12.0"
+
+providers:
+  - name: sample_provider
+    config:
+      - sample-provider-config-field-1: 1
+        sample-provider-config-field-2: 2
+
+provision:
+  - resource:
+      type: sample_instance
+      name: foo
+      config:
+        environment: bar
+
+  - module:
+      src: "git::https://git.repository/sample/project/path-20210202"
+      name: "{{.cluster_name}}-{{.id}}"
+      var:
+        sample-module-reference: "{{.reference}}-1"
+        id: 1
+        new_var: new_var_value
+
+  - module:
+      src: "git::https://git.repository/sample/project/path2"
+      name: "sample-module-2"
+      var:
+        id: 2

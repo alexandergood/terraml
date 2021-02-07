@@ -1,0 +1,119 @@
+---
+name: rtlapi
+
+namespaces:
+  core1:
+    # Retail Core Services API
+    - name: "sso-proxy"
+      annotations:
+        linkerd.io/inject: enabled
+    - name: "core-services"
+      annotations:
+        linkerd.io/inject: enabled
+    - name: "traefik"
+      annotations: {}
+    - name: "monitoring"
+      annotations: {}
+    - name: "linkerd"
+      annotations: {}
+  metrics1:
+    # Metrics Services
+    - name: "metrics"
+      annotations:
+        linkerd.io/inject: enabled
+    - name: "traefik"
+      annotations: {}
+    - name: "monitoring"
+      annotations: {}
+    - name: "linkerd"
+      annotations: {}
+  dash1:
+    # Dashbox dashboard
+    - name: "dashbox"
+      annotations:
+        linkerd.io/inject: enabled
+    - name: "traefik"
+      annotations: {}
+    - name: "monitoring"
+      annotations: {}
+    - name: "linkerd"
+      annotations: {}
+
+regions:
+  australiaeast:
+    azure:
+      dev:
+        all:
+          vnet:
+            address_spaces:
+              - "10.225.96.0/20"
+              - "10.226.192.0/18"
+        # Retail Core Services API
+        core1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.225.96.0/24"
+        # Retail Metrics API
+        metrics1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.225.97.0/24"
+        # Range and Location API
+        rloco1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.226.192.0/18"
+        # Dashbox Dashboard
+        dash1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.225.98.0/23"
+      uat:
+        all:
+          vnet:
+            address_spaces:
+              - "10.226.96.0/20"
+              - "10.227.192.0/18"
+        # Retail Core Services API
+        core1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.226.96.0/24"
+        # Retail Metrics API
+        metrics1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.226.97.0/24"
+        # Range and Location API
+        rloco1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.227.192.0/18"
+        # Dashbox Dashboard
+        dash1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.226.98.0/23"
+      prd:
+        all:
+          vnet:
+            address_spaces:
+              - "10.211.96.0/20"
+              - "10.211.192.0/18"
+        # Retail Core Services API
+        core1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.211.96.0/24"
+        # Retail Metrics API
+        metrics1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.211.97.0/24"
+        # Dashbox Dashboard
+        dash1:
+          vnet:
+            aks_worker_subnet_address_prefix: "10.211.98.0/23"
+
+aad_identities:
+  azure_q_qcp_rtlapi_dev_core1_aks_client_app: "e8debad5-2833-44a0-871a-0bb9ac2e5fc4"
+  azure_q_qcp_rtlapi_dev_metrics1_aks_client_app: "310ccb60-f2e0-4fe2-92aa-245873c8dc5e"
+  azure_q_qcp_rtlapi_dev_rloco1_aks_client_app: "c5e46be8-8fde-4c8e-aee9-56387f096723"
+  azure_q_qcp_rtlapi_dev_dash1_aks_client_app: "92b68834-416e-491b-90fe-6395736b711d"
+  azure_q_qcp_rtlapi_uat_core1_aks_client_app: "8aa7e420-cc75-45b6-9b1d-e31140182bfb"
+  azure_q_qcp_rtlapi_uat_metrics1_aks_client_app: "a7ef6190-98df-4f19-826e-71e29372d9ac"
+  azure_q_qcp_rtlapi_uat_rloco1_aks_client_app: "12c6b2ca-d940-44e6-bb0d-1a6feae919b5"
+  azure_q_qcp_rtlapi_uat_dash1_aks_client_app: "0ba8ae22-0571-4b16-876f-e67551c6eec1"
+  azure_q_qcp_rtlapi_prd_core1_aks_client_app: "1c8f27a9-5047-479d-97bc-4725da7eec5f"
+  azure_q_qcp_rtlapi_prd_metrics1_aks_client_app: "70ffe9af-2dd5-4d2f-b5f2-640382f7b24d"
+  azure_q_qcp_rtlapi_prd_dash1_aks_client_app: "def06e07-a8bb-4ee2-a55d-3e2a6be98dbd"
