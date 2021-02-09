@@ -3,6 +3,7 @@ name: sample-project-id
 id: sample-project-id
 service_account: sample-project-service-account
 
+reference: "sample-reference"
 cluster_name: "sample-cluster"
 
 namespaces:

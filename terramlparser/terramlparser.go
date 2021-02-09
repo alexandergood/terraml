@@ -1,16 +1,15 @@
 package terramlparser
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"text/template"
 )
 
 type TerramlParser struct {
@@ -106,7 +105,7 @@ func (p *TerramlParser) Cleanup() {
 	}
 }
 
-func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, []byte, error) {
+func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, map[string]interface{}, error) {
 	p := &TerramlParser{}
 	p.DeploymentManifest = make(map[string]interface{})
 
@@ -119,8 +118,8 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 		return nil, nil, err
 	}
 
+	defer p.Cleanup()
 	if err := p.ParseTerramlFile(); err != nil {
-		p.Cleanup()
 		return nil, nil, err
 	}
 
@@ -131,14 +130,7 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 		return nil, nil, fmt.Errorf("error processing provision blocks: %v", err)
 	}
 
-	serializedDeploymentManifest, err := json.Marshal(p.DeploymentManifest)
-	if err != nil {
-		p.Cleanup()
-		return nil, nil, errors.WithStack(err)
-	}
-
-	p.Cleanup()
-	return deploymentOrder, serializedDeploymentManifest, nil
+	return deploymentOrder, p.DeploymentManifest, nil
 }
 
 func (p *TerramlParser) ValidateInput() error {
@@ -205,7 +197,10 @@ func (p *TerramlParser) GetTerraformConfBlock() {
 	terraformVer := p.TerramlFileContent.TerraformConf.TerraformVer
 
 	terraformConfBlock := make(map[string]interface{})
-	terraformConfBlock[backendType] = config
+	terraformConfBackendBlock := make(map[string]interface{})
+	terraformConfBackendBlock[backendType] = config
+
+	terraformConfBlock["backend"] = terraformConfBackendBlock
 	terraformConfBlock["required_version"] = terraformVer
 
 	p.DeploymentManifest["terraform"] = terraformConfBlock

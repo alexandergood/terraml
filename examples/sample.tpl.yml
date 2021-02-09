@@ -9,10 +9,10 @@ terraform_conf:
       region: "us-east-1"
       encrypt: true
       dynamodb_table: "my-lock-table"
-  terraform_ver: "1.12.0"
+  terraform_ver: ">1.12.0"
 
 providers:
-  - name: sample_provider
+  - name: sampleprovider
     config:
       - sample-provider-config-field-1: 1
         sample-provider-config-field-2: 2
