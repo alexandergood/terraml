@@ -2,14 +2,15 @@ package terramlparser
 
 import (
 	"fmt"
+	"github.com/Masterminds/sprig"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"text/template"
 )
 
 type TerramlParser struct {
@@ -77,7 +78,7 @@ func GetTaskBlock(task Task) (string, string, map[string]interface{}, error) {
 }
 
 func (p *TerramlParser) RenderTerramlFileWithVariables(filePath string)  error {
-	tmpl, err := template.New(filePath).ParseFiles(filePath)
+	tmpl, err := template.New(filePath).Funcs(sprig.FuncMap()).ParseFiles(filePath)
 
 	if err != nil {
 		return errors.WithStack(err)

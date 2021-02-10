@@ -19,13 +19,13 @@ func GenerateTerraformCodeDirectories(deploymentOrder []string, deploymentManife
 	return c.GenerateTerraformCodeDirectories()
 }
 
-func (c *TerraformCodeGenerator) WriteTerraformFile(terraformFileType string, terraformFileContent interface{}, codeDirectory string) error {
-	terraformFileContentString, err := json.MarshalIndent(terraformFileContent, "", strings.Repeat(" ", 4))
+func (c *TerraformCodeGenerator) WriteTerraformFile(terraformFileBlock interface{}, codeDirectory string) error {
+	terraformFileContentString, err := json.MarshalIndent(terraformFileBlock, "", strings.Repeat(" ", 4))
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	fileName := codeDirectory + "/" + terraformFileType + ".tf.json"
+	fileName := codeDirectory + "/main.tf.json"
 	err = ioutil.WriteFile(fileName, terraformFileContentString, 0777)
 
 	return nil
@@ -37,24 +37,15 @@ func (c *TerraformCodeGenerator) GenerateTerraformDeploymentDirectory(deployment
 		return "", errors.WithStack(err)
 	}
 
-	terraformConfElement := make(map[string]interface{})
-	terraformConfElement["terraform"] = c.DeploymentManifest["terraform"]
-
-	providerElement := make(map[string]interface{})
-	providerElement["provider"] = c.DeploymentManifest["provider"]
-
-	deploymentElement := make(map[string]interface{})
 	deploymentElementInputs := make(map[string]interface{})
 	deploymentElementInputs[deploymentName] = c.DeploymentManifest[deploymentType].(map[string]interface{})[deploymentName]
-	deploymentElement[deploymentType] = deploymentElementInputs
 
-	if err := c.WriteTerraformFile("terraform", terraformConfElement, codeDirectory); err != nil {
-		return "", err
-	}
-	if err := c.WriteTerraformFile("provider", providerElement, codeDirectory); err != nil {
-		return "", err
-	}
-	if err := c.WriteTerraformFile(deploymentType, deploymentElement, codeDirectory); err != nil {
+	terraformFileBlock := make(map[string]interface{})
+	terraformFileBlock["terraform"] = c.DeploymentManifest["terraform"]
+	terraformFileBlock["provider"] = c.DeploymentManifest["provider"]
+	terraformFileBlock[deploymentType] = deploymentElementInputs
+
+	if err := c.WriteTerraformFile(terraformFileBlock, codeDirectory); err != nil {
 		return "", err
 	}
 

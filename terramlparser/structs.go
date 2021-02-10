@@ -1,9 +1,9 @@
 package terramlparser
 
 type Module struct {
-	Src      string   					 `yaml:"src"`
-	Name     string   					 `yaml:"name"`
-	Var      map[string]interface{}		 `yaml:"var"`
+	Src      string   				`yaml:"src"`
+	Name     string   			    `yaml:"name"`
+	Var      map[string]interface{} `yaml:"var"`
 }
 
 type Resource struct {
@@ -33,10 +33,10 @@ type TerraformConf struct {
 }
 
 type TerramlFileContent struct {
-	FileType       string         	      `yaml:"type"`
-	TerraformConf  TerraformConf  		  `yaml:"terraform_conf"`
-	Providers      []Provider             `yaml:"providers"`
-	Provision      []Task	      		  `yaml:"provision"`
+	FileType       string        `yaml:"type"`
+	TerraformConf  TerraformConf `yaml:"terraform_conf"`
+	Providers      []Provider    `yaml:"providers"`
+	Provision      []Task	     `yaml:"provision"`
 }
 
 func (m *Module) IsEmpty() bool {
