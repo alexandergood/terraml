@@ -15,7 +15,7 @@ import (
 
 type TerramlParser struct {
 	TerramlFileContent  TerramlFileContent
-	Variables			map[string]interface{}
+	Variables			interface{}
 	DeploymentManifest  map[string]interface{}
 	RenderedFilePath    string
 }
@@ -119,7 +119,7 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 		return nil, nil, err
 	}
 
-	defer p.Cleanup()
+	// defer p.Cleanup()
 	if err := p.ParseTerramlFile(); err != nil {
 		return nil, nil, err
 	}
@@ -184,7 +184,7 @@ func (p *TerramlParser) LoadVariables(varFilePath string) error {
 		return errors.WithStack(err)
 	}
 
-	err = yaml.Unmarshal(variableFile, &p.Variables)
+	err = CustomizedJSONUnmarshal(variableFile, &p.Variables)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -195,14 +195,12 @@ func (p *TerramlParser) LoadVariables(varFilePath string) error {
 func (p *TerramlParser) GetTerraformConfBlock() {
 	backendType := p.TerramlFileContent.TerraformConf.RemoteState.BackendType
 	config := p.TerramlFileContent.TerraformConf.RemoteState.Config
-	terraformVer := p.TerramlFileContent.TerraformConf.TerraformVer
 
 	terraformConfBlock := make(map[string]interface{})
 	terraformConfBackendBlock := make(map[string]interface{})
 	terraformConfBackendBlock[backendType] = config
 
 	terraformConfBlock["backend"] = terraformConfBackendBlock
-	terraformConfBlock["required_version"] = terraformVer
 
 	p.DeploymentManifest["terraform"] = terraformConfBlock
 }

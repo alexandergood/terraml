@@ -29,7 +29,6 @@ type RemoteState struct {
 
 type TerraformConf struct {
 	RemoteState  RemoteState `yaml:"remote_state"`
-	TerraformVer string  	 `yaml:"terraform_ver"`
 }
 
 type TerramlFileContent struct {
