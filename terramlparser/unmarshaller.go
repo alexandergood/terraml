@@ -5,7 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func CustomizedJSONUnmarshal(in []byte, out interface{}) error {
+func CustomizedYAMLUnmarshal(in []byte, out interface{}) error {
 	var res interface{}
 
 	if err := yaml.Unmarshal(in, &res); err != nil {

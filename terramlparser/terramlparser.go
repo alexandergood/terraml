@@ -119,13 +119,12 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 		return nil, nil, err
 	}
 
-	// defer p.Cleanup()
+	defer p.Cleanup()
 	if err := p.ParseTerramlFile(); err != nil {
 		return nil, nil, err
 	}
 
 	p.GetTerraformConfBlock()
-	p.GetProviderBlock()
 	deploymentOrder, err := p.GetProvisionBlock()
 	if err != nil {
 		return nil, nil, fmt.Errorf("error processing provision blocks: %v", err)
@@ -184,7 +183,7 @@ func (p *TerramlParser) LoadVariables(varFilePath string) error {
 		return errors.WithStack(err)
 	}
 
-	err = CustomizedJSONUnmarshal(variableFile, &p.Variables)
+	err = CustomizedYAMLUnmarshal(variableFile, &p.Variables)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -201,17 +200,17 @@ func (p *TerramlParser) GetTerraformConfBlock() {
 	terraformConfBackendBlock[backendType] = config
 
 	terraformConfBlock["backend"] = terraformConfBackendBlock
-
+	terraformConfBlock["required_providers"] = p.GetProviderBlock()
 	p.DeploymentManifest["terraform"] = terraformConfBlock
 }
 
-func (p *TerramlParser) GetProviderBlock() {
+func (p *TerramlParser) GetProviderBlock() map[string]interface{} {
 	providerBlock := make(map[string]interface{})
 	for _, provider := range p.TerramlFileContent.Providers {
 		providerBlock[provider.Name] = provider.Config
 	}
 
-	p.DeploymentManifest["provider"] = providerBlock
+	return providerBlock
 }
 
 func (p *TerramlParser) GetProvisionBlock() ([]string, error) {
