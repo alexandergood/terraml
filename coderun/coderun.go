@@ -28,6 +28,12 @@ func RunTerraformCode(executeOrder []string, action string) error {
 	}
 
 	for _, codeDirectory := range executeOrder {
+		deploymentInfo, err := strings.Split(codeDirectory, "-")
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		os.Setenv("TERRAML_RESOURCE_PATH", strings.Join(deploymentInfo, "/"))
+
 		terraform, err := tfexec.NewTerraform(codeDirectory, execPath)
 		if err != nil {
 			return errors.WithStack(err)

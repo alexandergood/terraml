@@ -21,6 +21,10 @@ type TerramlParser struct {
 	RenderedFilePath    string
 }
 
+func PathToResource() string {
+	return "${TERRAML_RESOURCE_PATH}"
+}
+
 func DetermineTaskType(task Task) string {
 	if !task.Module.IsEmpty() && !task.Resource.IsEmpty() {
 		return "multiple_task_type"
@@ -90,7 +94,7 @@ func (p *TerramlParser) RenderTerramlFileWithVariables(filePath string)  error {
 	}
 
 	fileName := filepath.Base(filePath)
-	tmpl, err := template.New(fileName).Funcs(sprig.FuncMap()).ParseFiles(fileName)
+	tmpl, err := template.New(fileName).Funcs(sprig.FuncMap()).Funcs(template.FuncMap{"path_to_resource": PathToResource}).ParseFiles(fileName)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -134,7 +138,7 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 		return nil, nil, err
 	}
 
-	defer p.Cleanup()
+	// defer p.Cleanup()
 	if err := p.ParseTerramlFile(); err != nil {
 		return nil, nil, err
 	}
@@ -154,12 +158,12 @@ func (p *TerramlParser) ValidateInput() error {
 }
 
 func (p *TerramlParser) ParseTerramlFile() error {
-	terramalFile, err := ioutil.ReadFile(p.RenderedFilePath)
+	terramlFile, err := ioutil.ReadFile(p.RenderedFilePath)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	err = yaml.Unmarshal(terramalFile, &p.TerramlFileContent)
+	err = yaml.Unmarshal(terramlFile, &p.TerramlFileContent)
 	if err != nil {
 		return errors.WithStack(err)
 	}

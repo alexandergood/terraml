@@ -34,7 +34,7 @@ func (c *TerraformCodeGenerator) WriteTerraformFile(terraformFileBlock interface
 }
 
 func (c *TerraformCodeGenerator) GenerateTerraformDeploymentDirectory(deploymentType string, deploymentName string) (string, error) {
-	codeDirectory := uuid.New().String()
+	codeDirectory := deploymentType + "-" + deploymentName + "-" + uuid.New().String()
 	if err := os.Mkdir(codeDirectory, 0777); err != nil {
 		return "", errors.WithStack(err)
 	}
