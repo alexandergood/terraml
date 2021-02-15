@@ -5,6 +5,7 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	"github.com/zakufish/terraml/utils"
 	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
@@ -78,13 +79,27 @@ func GetTaskBlock(task Task) (string, string, map[string]interface{}, error) {
 }
 
 func (p *TerramlParser) RenderTerramlFileWithVariables(filePath string)  error {
-	tmpl, err := template.New(filePath).Funcs(sprig.FuncMap()).ParseFiles(filePath)
-
+	basePath, err := os.Getwd()
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	renderedFilePath := filepath.Base(filePath) + "-" + uuid.New().String()
+	fileDir := filepath.Dir(filePath)
+	if err := os.Chdir(fileDir); err != nil {
+		return errors.WithStack(err)
+	}
+
+	fileName := filepath.Base(filePath)
+	tmpl, err := template.New(fileName).Funcs(sprig.FuncMap()).ParseFiles(fileName)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if err := os.Chdir(basePath); err != nil {
+		return errors.WithStack(err)
+	}
+
+	renderedFilePath := fileName + "-" + uuid.New().String()
 	f, err := os.Create(renderedFilePath)
 	if err != nil {
 		return errors.WithStack(err)
@@ -134,27 +149,7 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 }
 
 func (p *TerramlParser) ValidateInput() error {
-	if err := p.ValidateTerraformConfiguration(); err != nil {
-		return errors.WithStack(err)
-	}
-	if p.TerramlFileContent.FileType == "playbook" {
-		return p.ValidatePlaybookInput()
-	} else if p.TerramlFileContent.FileType == "template" {
-		return p.ValidateTemplate()
-	} else {
-		return errors.WithStack(fmt.Errorf("unrecognized file type"))
-	}
-}
-
-func (p *TerramlParser) ValidateTerraformConfiguration() error {
-	return nil
-}
-
-func (p *TerramlParser) ValidatePlaybookInput() error {
-	return nil
-}
-
-func (p *TerramlParser) ValidateTemplate() error {
+	// TODO;
 	return nil
 }
 
@@ -183,7 +178,7 @@ func (p *TerramlParser) LoadVariables(varFilePath string) error {
 		return errors.WithStack(err)
 	}
 
-	err = CustomizedYAMLUnmarshal(variableFile, &p.Variables)
+	err = utils.CustomizedYAMLUnmarshal(variableFile, &p.Variables)
 	if err != nil {
 		return errors.WithStack(err)
 	}

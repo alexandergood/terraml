@@ -9,16 +9,25 @@ import (
 	"sort"
 )
 
-func RunTerraformCode(executeOder []string, action string) error {
+func DestroyCodeDirectories(codeDirectories []string) {
+	for _, codeDirectory := range codeDirectories {
+		_ = os.RemoveAll(codeDirectory)
+	}
+}
+
+func RunTerraformCode(executeOrder []string, action string) error {
+	defer DestroyCodeDirectories(executeOrder)
+
 	execPath := os.Getenv("TERRAFORM_EXEC_PATH")
 	if execPath == "" {
 		return errors.WithStack(fmt.Errorf("undefined terraform exec path"))
 	}
 
 	if action == "destroy" {
-		sort.Sort(sort.Reverse(sort.StringSlice(executeOder)))
+		sort.Sort(sort.Reverse(sort.StringSlice(executeOrder)))
 	}
-	for _, codeDirectory := range executeOder {
+
+	for _, codeDirectory := range executeOrder {
 		terraform, err := tfexec.NewTerraform(codeDirectory, execPath)
 		if err != nil {
 			return errors.WithStack(err)

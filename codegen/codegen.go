@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	Utils "github.com/zakufish/terraml/utils"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -15,7 +16,8 @@ type TerraformCodeGenerator struct {
 }
 
 func GenerateTerraformCodeDirectories(deploymentOrder []string, deploymentManifest map[string]interface{}) ([]string, error) {
-	c := &TerraformCodeGenerator{deploymentOrder, deploymentManifest}
+	cleanedDeploymentManifest := Utils.CleanupStringMap(deploymentManifest)
+	c := &TerraformCodeGenerator{deploymentOrder, cleanedDeploymentManifest}
 	return c.GenerateTerraformCodeDirectories()
 }
 
@@ -42,7 +44,6 @@ func (c *TerraformCodeGenerator) GenerateTerraformDeploymentDirectory(deployment
 
 	terraformFileBlock := make(map[string]interface{})
 	terraformFileBlock["terraform"] = c.DeploymentManifest["terraform"]
-	terraformFileBlock["provider"] = c.DeploymentManifest["provider"]
 	terraformFileBlock[deploymentType] = deploymentElementInputs
 
 	if err := c.WriteTerraformFile(terraformFileBlock, codeDirectory); err != nil {

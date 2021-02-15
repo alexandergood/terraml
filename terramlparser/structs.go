@@ -32,7 +32,6 @@ type TerraformConf struct {
 }
 
 type TerramlFileContent struct {
-	FileType       string        `yaml:"type"`
 	TerraformConf  TerraformConf `yaml:"terraform_conf"`
 	Providers      []Provider    `yaml:"providers"`
 	Provision      []Task	     `yaml:"provision"`
