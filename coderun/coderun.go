@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"os"
 	"sort"
+	"strings"
 )
 
 func DestroyCodeDirectories(codeDirectories []string) {
