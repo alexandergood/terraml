@@ -138,7 +138,7 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 		return nil, nil, err
 	}
 
-	// defer p.Cleanup()
+	defer p.Cleanup()
 	if err := p.ParseTerramlFile(); err != nil {
 		return nil, nil, err
 	}
