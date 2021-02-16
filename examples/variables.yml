@@ -1,0 +1,15 @@
+---
+name: terraml_demo_project
+
+clusters:
+  - name: demo_cluster_1
+    ami: ami-ebd02392
+    key: "user1"
+    vpc_ids: ["sg-12345678"]
+    subnet_id: "subnet-useast-demo-1"
+
+  - name: demo_cluster_2
+    ami: ami-ebd01594
+    key: "user2"
+    vpc_ids: []
+    subnet_id: "subnet-useast-demo-2"
