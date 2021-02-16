@@ -30,8 +30,7 @@ func RunTerraformCode(executeOrder []string, action string) error {
 
 	for _, codeDirectory := range executeOrder {
 		deploymentInfo := strings.Split(codeDirectory, "-")
-
-		os.Setenv("TERRAML_RESOURCE_PATH", strings.Join(deploymentInfo, "/"))
+		_ = os.Setenv("TF_VAR_TERRAML_RESOURCE_PATH", strings.Join(deploymentInfo, "/"))
 
 		terraform, err := tfexec.NewTerraform(codeDirectory, execPath)
 		if err != nil {

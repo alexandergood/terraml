@@ -2,7 +2,6 @@ package codegen
 
 import (
 	"encoding/json"
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	Utils "github.com/zakufish/terraml/utils"
 	"io/ioutil"
@@ -34,7 +33,8 @@ func (c *TerraformCodeGenerator) WriteTerraformFile(terraformFileBlock interface
 }
 
 func (c *TerraformCodeGenerator) GenerateTerraformDeploymentDirectory(deploymentType string, deploymentName string) (string, error) {
-	codeDirectory := deploymentType + "-" + deploymentName + "-" + uuid.New().String()
+	codeDirectory := deploymentType + "-" + deploymentName
+
 	if err := os.Mkdir(codeDirectory, 0777); err != nil {
 		return "", errors.WithStack(err)
 	}

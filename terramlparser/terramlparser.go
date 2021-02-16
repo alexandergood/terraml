@@ -5,7 +5,6 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	"github.com/zakufish/terraml/utils"
 	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
@@ -22,7 +21,7 @@ type TerramlParser struct {
 }
 
 func PathToResource() string {
-	return "${TERRAML_RESOURCE_PATH}"
+	return "${var.TERRAML_RESOURCE_PATH}"
 }
 
 func DetermineTaskType(task Task) string {
@@ -118,6 +117,10 @@ func (p *TerramlParser) RenderTerramlFileWithVariables(filePath string)  error {
 	return nil
 }
 
+func (p *TerramlParser) BuildResourcePathVariable() {
+	p.DeploymentManifest["variable"] = map[string]interface{}{"TERRAML_RESOURCE_PATH": ""}
+}
+
 func (p *TerramlParser) Cleanup() {
 	err := os.Remove(p.RenderedFilePath)
 	if err != nil {
@@ -137,13 +140,13 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 	if err != nil {
 		return nil, nil, err
 	}
-
 	defer p.Cleanup()
 	if err := p.ParseTerramlFile(); err != nil {
 		return nil, nil, err
 	}
 
 	p.GetTerraformConfBlock()
+	p.BuildResourcePathVariable()
 	deploymentOrder, err := p.GetProvisionBlock()
 	if err != nil {
 		return nil, nil, fmt.Errorf("error processing provision blocks: %v", err)
@@ -182,7 +185,7 @@ func (p *TerramlParser) LoadVariables(varFilePath string) error {
 		return errors.WithStack(err)
 	}
 
-	err = utils.CustomizedYAMLUnmarshal(variableFile, &p.Variables)
+	err = yaml.Unmarshal(variableFile, &p.Variables)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -233,5 +236,6 @@ func (p *TerramlParser) GetProvisionBlock() ([]string, error) {
 
 	p.DeploymentManifest["module"] = provisionModuleBlock
 	p.DeploymentManifest["resource"] = provisionResourceBlock
+
 	return deploymentOrder, nil
 }
