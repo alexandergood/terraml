@@ -155,11 +155,6 @@ func GetDeploymentManifest(filePath string, variableFilePath string) ([]string, 
 	return deploymentOrder, p.DeploymentManifest, nil
 }
 
-func (p *TerramlParser) ValidateInput() error {
-	// TODO;
-	return nil
-}
-
 func (p *TerramlParser) ParseTerramlFile() error {
 	terramlFile, err := ioutil.ReadFile(p.RenderedFilePath)
 	if err != nil {
@@ -167,11 +162,6 @@ func (p *TerramlParser) ParseTerramlFile() error {
 	}
 
 	err = yaml.Unmarshal(terramlFile, &p.TerramlFileContent)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	err = p.ValidateInput()
 	if err != nil {
 		return errors.WithStack(err)
 	}
