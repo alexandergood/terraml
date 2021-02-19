@@ -8,13 +8,16 @@ My job as a Platform Engineer @ [Quantium](https://quantium.com/) involves provi
 
 Eventually, our infrastructure codebase got to a point where it was almost impossible to maintain/patch. A trivial change from cloud provider would force us to effectively modify hundreds of Terragrunt files.
 
-Although Terragrunt wasn't perfect, it had its advantages, included handy state file management, variables loader, etc. After gave this problem some thoughts, I decided to develop an open source solution which incorporated with Terragrunt's nice features, as well as capable of handling repetitive infrastructure code.
+Although Terragrunt wasn't perfect, it had its advantages, included handy state file management, variables loader, etc. After giving this problem some thoughts, I decided to develop an open source solution which incorporated with Terragrunt's nice features, as well as capable of handling repetitive infrastructure code.
 
 That's how Terraml was made.
 
 # How to Build & Install Terraml
 
-Terraml is still in alpha. I am planning to release a package when it reaches ```v1.0```. For now, you can build and install Terraml via ```go build```.
+Terraml is still in alpha. I am planning to release a package when it reaches ```v1.0```. For now, you can build and install Terraml on Linux via:
+```bash
+go build && mv terraml /usr/local/bin/terraml
+```
 
 # How to Use Terraml
 
