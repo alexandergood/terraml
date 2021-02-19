@@ -17,7 +17,7 @@ func DestroyCodeDirectories(codeDirectories []string) {
 }
 
 func RunTerraformCode(executeOrder []string, action string) error {
-	defer DestroyCodeDirectories(executeOrder)
+	// defer DestroyCodeDirectories(executeOrder)
 
 	execPath := os.Getenv("TERRAFORM_EXEC_PATH")
 	if execPath == "" {
