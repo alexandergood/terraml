@@ -22,16 +22,19 @@ func main() {
 		fmt.Println(fmt.Errorf("no file supplied to execute"))
 	}
 
+	fmt.Printf("Rendering and generating the deployment manifests ...")
 	deploymentOrder, deploymentManifest, err := TerramlParser.GetDeploymentManifest(filePath, variableFilePath)
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	fmt.Printf("Generating Terraform code directories ...")
 	executeOrder, err := TerramlCodeGenerator.GenerateTerraformCodeDirectories(deploymentOrder, deploymentManifest)
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	fmt.Printf("Executing Terraform commands ...")
 	if err := TerramlCodeRunner.RunTerraformCode(executeOrder, action); err != nil {
 		fmt.Println(err)
 	}
