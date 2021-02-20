@@ -31,7 +31,7 @@ In this case, two code directories will be generated (since there will be two mo
 1. Terraform Configuration - ```backend``` and ```required_providers```. These configurations will become the "global" terraform setting for this particular terraml job.
 2. Module - the provision block.
 
-As Terraml runs these generated Terraform files, the code directories will also get cleaned up.
+***Code directory will get cleaned up after Terraform action***
 
 # TODO
 
