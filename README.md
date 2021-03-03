@@ -24,7 +24,7 @@ go build && mv terraml /usr/local/bin/terraml
 To achieve our goal of minimizing repetitive infrastructure code, Terraml introduces the concept of ```infrastructure template``` - a template file that will be rendered and executed against user's variable inputs. We've provided a simple [template file](https://github.com/zakufish/terraml/blob/main/examples/sample.tpl.yml) and a [variable file](https://github.com/zakufish/terraml/blob/main/examples/variables.yml) inside ```examples/``` directory, which can be executed by running:
 
 ```
-terraml --action init --file examples/sample.tpl.yml --variables examples/variables.yml
+terraml init --template examples/sample.tpl.yml --variables examples/variables.yml
 ```
 
 In this case, two code directories will be generated (since there will be two modules, given the iteration of ```clusters``` list defined in our template), each contains a ```main.tf.json``` file for terraform to consume. The ```main.tf.json``` files will also include two different types of ```terraform blocks```:
