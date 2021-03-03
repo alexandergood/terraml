@@ -1,14 +1,14 @@
 package terramlparser
 
 type Module struct {
-	Src      string				    `yaml:"src"`
-	Name     string   			    `yaml:"name"`
+	Src      string		        `yaml:"src"`
+	Name     string   	        `yaml:"name"`
 	Var      map[string]interface{} `yaml:"var"`
 }
 
 type Resource struct {
-	ResourceType string 			    `yaml:"type"`
-	Name         string 			    `yaml:"name"`
+	ResourceType string 		    `yaml:"type"`
+	Name         string 		    `yaml:"name"`
 	Config       map[string]interface{} `yaml:"config"`
 }
 
