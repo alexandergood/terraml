@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
@@ -15,6 +16,7 @@ func runAction(c *cli.Context) error {
 	action := c.Command.Name
 	template := c.String("template")
 	variables := c.String("variables")
+	nonInteractive := c.Bool("non-interactive")
 
 	if template == "" {
 		return errors.New("no template file supplied to execute")
@@ -37,6 +39,35 @@ func runAction(c *cli.Context) error {
 	}
 
 	fmt.Println("Executing Terraform commands ...")
+	if nonInteractive == true || action == "init" || action == "plan" {
+		if err := TerramlCodeRunner.RunTerraformCode(executeOrder, action); err != nil {
+			return errors.Wrap(err, "terraml: terraform command execution error")
+		}
+	} else {
+		initError := TerramlCodeRunner.RunTerraformCode(executeOrder, "init")
+		planError := TerramlCodeRunner.RunTerraformCode(executeOrder, "plan")
+
+		if initError == nil && planError == nil {
+			scanner := bufio.NewScanner(os.Stdin)
+			for scanner.Scan() {
+				if scanner.Text() == "yes" {
+					if err := TerramlCodeRunner.RunTerraformCode(executeOrder, action); err != nil {
+						return errors.Wrap(err, "terraml: terraform command execution error")
+					}
+				} else if scanner.Text() == "no" {
+					return fmt.Errorf("Abort")
+				} else {
+					return fmt.Errorf("unrecognized input")
+				}
+			}
+
+			if scanner.Err() != nil {
+				return fmt.Errorf("console stdin error")
+			}
+		} else {
+			return fmt.Errorf("Terraml code runner initialization failure: initError - %v, planError - %v\n", initError, planError)
+		}
+	}
 	if err := TerramlCodeRunner.RunTerraformCode(executeOrder, action); err != nil {
 		return errors.Wrap(err, "terraml: terraform command execution error")
 	}
@@ -56,6 +87,10 @@ func main() {
 			Aliases:  []string{"v"},
 			Usage:    "Load variables from `FILE`",
 			Required: true,
+		},
+		&cli.BoolFlag{
+			Name:    "non-interactive",
+			Usage:   "Disable interactive mode",
 		},
 	}
 
