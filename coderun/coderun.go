@@ -16,16 +16,10 @@ func DestroyCodeDirectories(codeDirectories []string) {
 	}
 }
 
-func RunTerraformCode(executeOrder []string, action string) error {
-	defer DestroyCodeDirectories(executeOrder)
-
+func ExecuteTerraformAction(executeOrder []string, action string) error {
 	execPath := os.Getenv("TERRAFORM_EXEC_PATH")
 	if execPath == "" {
 		return fmt.Errorf("undefined terraform exec path (TERRAFORM_EXEC_PATH unset)")
-	}
-
-	if action == "destroy" {
-		sort.Sort(sort.Reverse(sort.StringSlice(executeOrder)))
 	}
 
 	for _, codeDirectory := range executeOrder {
@@ -49,10 +43,20 @@ func RunTerraformCode(executeOrder []string, action string) error {
 			return errors.WithStack(fmt.Errorf("unrecognized action item"))
 		}
 
-		if err != nil  {
+		if err != nil {
 			return errors.WithStack(err)
 		}
 	}
 
 	return nil
+}
+
+func RunTerraformCode(executeOrder []string, action string) error {
+	defer DestroyCodeDirectories(executeOrder)
+
+	if action == "destroy" {
+		sort.Sort(sort.Reverse(sort.StringSlice(executeOrder)))
+	}
+
+	return ExecuteTerraformAction(executeOrder, action)
 }
